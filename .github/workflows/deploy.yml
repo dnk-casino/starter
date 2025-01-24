@@ -14,15 +14,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Get gpg key
-        run: gpg --keyserver keyserver.ubuntu.com --recv-keys B276631BE7A1C122
-
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '21'
-          #gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Setup Maven Settings
