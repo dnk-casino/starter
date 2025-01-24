@@ -17,6 +17,7 @@
   <version>1.0.0</version>
 
   <name>starter</name>
+  <description>Librería para los juegos de dnk-casino</description>
   <url>https://github.com/dnk-casino/starter</url>
 
   <licenses>

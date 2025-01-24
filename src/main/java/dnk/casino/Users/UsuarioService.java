@@ -123,6 +123,12 @@ public class UsuarioService {
         return user.getBjwins();
     }
 
+    public Usuario victoria(String id) {
+        Usuario user = usuarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        user.victoria();
+        return usuarioRepository.save(user);
+    }
+
     public Usuario bjvictoria(String id) {
         Usuario user = usuarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         user.bjvictoria();
