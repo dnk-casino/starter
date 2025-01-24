@@ -1,0 +1,2 @@
+# starter
+Maven library
