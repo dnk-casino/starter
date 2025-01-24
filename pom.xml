@@ -123,6 +123,7 @@
         <artifactId>maven-source-plugin</artifactId>
         <executions>
           <execution>
+            <phase>package</phase>
             <goals>
               <goal>jar</goal>
             </goals>
@@ -135,6 +136,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <executions>
           <execution>
+            <phase>package</phase>
             <goals>
               <goal>jar</goal>
             </goals>
