@@ -1,2 +1,2 @@
 # starter
-Maven library
+Librería para los juegos de dnk-casino
