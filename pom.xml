@@ -38,12 +38,13 @@
     </developer>
   </developers>
 
-  <distributionManagement>
-    <repository>
-      <id>central</id>
+  <!--<distributionManagement>
+     <repository>
+      <id>github</id>
+      <name>GitHub Packages</name>
       <url>https://maven.pkg.github.com/dnk-casino/starter</url>
-    </repository>
-  </distributionManagement>
+    </repository> 
+  </distributionManagement>-->
 
   <scm>
     <connection>scm:git:git://github.com/dnk-casino/starter.git</connection>
