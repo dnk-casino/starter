@@ -27,7 +27,7 @@ public class UsuarioService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public Usuario registrarUsuario(String username, String password, String email, Rol rol) {
+    public Usuario registrarUsuario(String username, String password, String email, Usuario.Rol rol) {
         if (usuarioRepository.findByUsername(username).isPresent()) {
             throw new IllegalArgumentException("El nombre de usuario ya existe");
         }

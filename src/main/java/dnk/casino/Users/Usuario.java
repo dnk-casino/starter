@@ -25,6 +25,10 @@ public class Usuario {
     private String tokenRestablecimientoContrasena;
     private LocalDateTime fechaExpiracionTokenRestablecimientoContrasena;
 
+    public enum Rol {
+        ROLE_USER, ROLE_ADMIN, ROLE_VIP;
+    }
+
     public Usuario() {
     }
 

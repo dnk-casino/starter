@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import dnk.casino.Mail.EmailService;
+import dnk.casino.Users.Usuario.Rol;
 
 @RestController
 @RequestMapping("/api/auth")
