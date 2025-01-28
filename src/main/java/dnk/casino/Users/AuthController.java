@@ -16,16 +16,33 @@ import org.springframework.web.bind.annotation.*;
 import dnk.casino.Mail.EmailService;
 import dnk.casino.Users.Usuario.Rol;
 
+/**
+ * Controlador de autenticación para la API.
+ * 
+ * @author Danikileitor
+ */
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    /**
+     * Servicio de usuarios.
+     */
     @Autowired
     private UsuarioService usuarioService;
 
+    /**
+     * Servicio de correo electrónico.
+     */
     @Autowired
     private EmailService emailService;
 
+    /**
+     * Registra un nuevo usuario en el sistema.
+     * 
+     * @param registroRequest la solicitud de registro
+     * @return el usuario registrado o un mensaje de error
+     */
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegistroRequest registroRequest) {
         if (registroRequest.getRol() != null) {
@@ -53,6 +70,12 @@ public class AuthController {
         }
     }
 
+    /**
+     * Inicia sesión un usuario en el sistema.
+     * 
+     * @param loginRequest la solicitud de login
+     * @return el token de autenticación o un mensaje de error
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         Optional<Usuario> usuario = usuarioService.login(
@@ -80,6 +103,12 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario o contraseña incorrectos");
     }
 
+    /**
+     * Inicia sesión un administrador en el sistema.
+     * 
+     * @param loginRequest la solicitud de login
+     * @return el token de autenticación o un mensaje de error
+     */
     @PostMapping("/admin/login")
     public ResponseEntity<?> adminLogin(@RequestBody LoginRequest loginRequest) {
         Optional<Usuario> usuario = usuarioService.login(
@@ -101,6 +130,12 @@ public class AuthController {
                 .body("Acceso denegado. Solo los administradores pueden acceder.");
     }
 
+    /**
+     * Envía un correo electrónico para restablecer la contraseña de un usuario.
+     * 
+     * @param emailRequest la solicitud de restablecimiento de contraseña
+     * @return un mensaje de éxito o error
+     */
     @PostMapping("/olvidar-contrasena")
     public ResponseEntity<?> olvidarContrasena(@RequestBody EmailRequest emailRequest) {
         String email = emailRequest.getEmail();
@@ -120,8 +155,16 @@ public class AuthController {
         }
     }
 
+    /**
+     * Restablece la contraseña de un usuario.
+     * 
+     * @param token                  la solicitud de restablecimiento de contraseña
+     * @param nuevaContrasenaRequest la nueva contraseña
+     * @return un mensaje de éxito o error
+     */
     @PostMapping("/restablecer-contrasena/{token}")
-    public ResponseEntity<?> restablecerContrasena(@PathVariable String token, @RequestBody NuevaContrasenaRequest nuevaContrasenaRequest) {
+    public ResponseEntity<?> restablecerContrasena(@PathVariable String token,
+            @RequestBody NuevaContrasenaRequest nuevaContrasenaRequest) {
         Optional<Usuario> usuarioOpt = usuarioService.findByTokenRestablecimientoContrasena(token);
         if (usuarioOpt.isPresent()) {
             usuarioService.actualizarContrasena(usuarioOpt.get(), nuevaContrasenaRequest.getNuevaContrasena());
@@ -132,85 +175,177 @@ public class AuthController {
     }
 }
 
+/**
+ * Solicitud de registro de un usuario.
+ */
 class RegistroRequest {
     private String username;
     private String password;
     private String email;
     private String rol;
 
+    /**
+     * Obtiene el nombre de usuario.
+     * 
+     * @return el nombre de usuario
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Establece el nombre de usuario.
+     * 
+     * @param username el nombre de usuario
+     */
     public void setUsername(String username) {
         this.username = username;
     }
 
+    /**
+     * Obtiene la contraseña.
+     * 
+     * @return la contraseña
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Establece la contraseña.
+     * 
+     * @param password la contraseña
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 
+    /**
+     * Obtiene el correo electrónico.
+     * 
+     * @return el correo electrónico
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Establece el correo electrónico.
+     * 
+     * @param email el correo electrónico
+     */
     public void setEmail(String email) {
         this.email = email;
     }
 
+    /**
+     * Obtiene el rol.
+     * 
+     * @return el rol
+     */
     public String getRol() {
         return rol;
     }
 
+    /**
+     * Establece el rol.
+     * 
+     * @param rol el rol
+     */
     public void setRol(String rol) {
         this.rol = rol;
     }
 }
 
+/**
+ * Solicitud de login de un usuario.
+ */
 class LoginRequest {
     private String username;
     private String password;
 
+    /**
+     * Obtiene el nombre de usuario.
+     * 
+     * @return el nombre de usuario
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Establece el nombre de usuario.
+     * 
+     * @param username el nombre de usuario
+     */
     public void setUsername(String username) {
         this.username = username;
     }
 
+    /**
+     * Obtiene la contraseña.
+     * 
+     * @return la contraseña
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Establece la contraseña.
+     * 
+     * @param password la contraseña
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 }
 
+/**
+ * Solicitud de restablecimiento de contraseña.
+ */
 class EmailRequest {
     private String email;
 
+    /**
+     * Obtiene el correo electrónico.
+     * 
+     * @return el correo electrónico
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Establece el correo electrónico.
+     * 
+     * @param email el correo electrónico
+     */
     public void setEmail(String email) {
         this.email = email;
     }
 }
 
+/**
+ * Solicitud de nueva contraseña.
+ */
 class NuevaContrasenaRequest {
     private String nuevaContrasena;
 
+    /**
+     * Obtiene la nueva contraseña.
+     * 
+     * @return la nueva contraseña
+     */
     public String getNuevaContrasena() {
         return nuevaContrasena;
     }
 
+    /**
+     * Establece la nueva contraseña.
+     * 
+     * @param nuevaContrasena la nueva contraseña
+     */
     public void setNuevaContrasena(String nuevaContrasena) {
         this.nuevaContrasena = nuevaContrasena;
     }

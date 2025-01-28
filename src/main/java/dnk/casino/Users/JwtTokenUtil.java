@@ -10,12 +10,28 @@ import java.security.Key;
 import java.util.Date;
 import java.util.Optional;
 
+/**
+ * Utilidad para la generación y verificación de tokens JWT.
+ * 
+ * @author Danikileitor
+ */
 public class JwtTokenUtil {
+    /**
+     * Clave secreta para la firma de tokens JWT.
+     */
     private final static String secret = System.getenv().get("JWT_SECRET");
 
+    /**
+     * Tiempo de expiración de los tokens JWT en milisegundos.
+     */
     private static Long expiration = Long.parseLong(System.getenv().get("JWT_EXPIRATION"), 10);
 
-    // Método para generar el token JWT
+    /**
+     * Genera un token JWT para un usuario.
+     * 
+     * @param usuario el usuario para el que se genera el token
+     * @return el token JWT generado
+     */
     public static String generateToken(Usuario usuario) {
         Key key = Keys.hmacShaKeyFor(secret.getBytes());
 
@@ -28,6 +44,12 @@ public class JwtTokenUtil {
                 .compact();
     }
 
+    /**
+     * Obtiene el nombre de usuario desde un token JWT.
+     * 
+     * @param token el token JWT
+     * @return el nombre de usuario
+     */
     public static String getUsernameFromToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(secret.getBytes())
@@ -37,6 +59,12 @@ public class JwtTokenUtil {
                 .getSubject();
     }
 
+    /**
+     * Obtiene el rol de usuario desde un token JWT.
+     * 
+     * @param token el token JWT
+     * @return el rol de usuario
+     */
     public static String getRoleFromToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(secret.getBytes())
@@ -47,8 +75,8 @@ public class JwtTokenUtil {
     }
 
     /**
-     * Extrae el nombre de usuario del token JWT.
-     *
+     * Extrae el nombre de usuario de un token JWT.
+     * 
      * @param token el token JWT
      * @return el nombre de usuario, si está presente
      */

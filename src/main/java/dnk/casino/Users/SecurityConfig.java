@@ -10,18 +10,38 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Configuración de seguridad para la aplicación.
+ * 
+ * @author Danikileitor
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    /**
+     * Filtro de autenticación JWT.
+     */
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    /**
+     * Codificador de contraseñas.
+     * 
+     * @return el codificador de contraseñas
+     */
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Configuración de la cadena de filtros de seguridad.
+     * 
+     * @param http la configuración de seguridad HTTP
+     * @return la cadena de filtros de seguridad
+     * @throws Exception si ocurre un error en la configuración
+     */
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // http.authorizeHttpRequests((auth) -> auth.anyRequest().permitAll());
