@@ -2,6 +2,7 @@ package dnk.casino.Users;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import dnk.casino.Users.Usuario.Rol;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,17 +47,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             try {
                 // Validar el token y extraer datos
-                String username = JwtTokenUtil.getUsernameFromToken(token);
-                String role = JwtTokenUtil.getRoleFromToken(token);
+                Optional<String> usernameOpt = JwtTokenUtil.extractUsernameFromToken(token);
+                Optional<Rol> roleOpt = JwtTokenUtil.extractRoleFromToken(token);
 
                 // Verificar si el token es válido y no hay una autenticación existente en el
                 // contexto de seguridad
-                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                if (usernameOpt.isPresent() && roleOpt.isPresent()
+                        && SecurityContextHolder.getContext().getAuthentication() == null) {
                     // Crear objeto de autenticación con el nombre de usuario y roles
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                            username,
-                            null, // Credenciales
-                            List.of(new SimpleGrantedAuthority(role)) // Roles
+                            usernameOpt.get(), // Nombre de usuario
+                            null, // Credenciales (pueden ser null después de autenticación)
+                            List.of(new SimpleGrantedAuthority(roleOpt.get().toString())) // Roles
                     );
 
                     // Configurar el contexto de seguridad con la autenticación

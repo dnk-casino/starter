@@ -3,12 +3,15 @@ package dnk.casino.Users;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-
-import java.security.Key;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
+
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
+import dnk.casino.Users.Usuario.Rol;
 
 /**
  * Utilidad para la generación y verificación de tokens JWT.
@@ -16,6 +19,7 @@ import java.util.Optional;
  * @author Danikileitor
  */
 public class JwtTokenUtil {
+
     /**
      * Clave secreta para la firma de tokens JWT.
      */
@@ -27,21 +31,43 @@ public class JwtTokenUtil {
     private static Long expiration = Long.parseLong(System.getenv().get("JWT_EXPIRATION"), 10);
 
     /**
+     * Obtiene la clave de firma para los tokens JWT.
+     * 
+     * @return la clave de firma
+     */
+    private final static SecretKey getSignInKey() {
+        byte[] bytes = Base64.getDecoder().decode(secret.getBytes(StandardCharsets.UTF_8));
+        return new SecretKeySpec(bytes, "HmacSHA256");
+    }
+
+    /**
      * Genera un token JWT para un usuario.
      * 
      * @param usuario el usuario para el que se genera el token
      * @return el token JWT generado
      */
     public static String generateToken(Usuario usuario) {
-        Key key = Keys.hmacShaKeyFor(secret.getBytes());
-
         return Jwts.builder()
-                .setSubject(usuario.getUsername()) // Añade el nombre del usuario
-                .claim("role", usuario.getRol().name()) // Añade el rol del usuario
-                .setIssuedAt(new Date()) // Hora actual como "emitido"
-                .setExpiration(new Date(System.currentTimeMillis() + expiration)) // Tiempo de expiración
-                .signWith(key, SignatureAlgorithm.HS256) // Firma del token
+                .subject(usuario.getUsername()) // Añade el nombre del usuario
+                .claim("role", usuario.getRol()) // Añade el rol del usuario
+                .issuedAt(new Date()) // Hora actual como "emitido"
+                .expiration(new Date(System.currentTimeMillis() + expiration)) // Tiempo de expiración
+                .signWith(getSignInKey()) // Firma del token
                 .compact();
+    }
+
+    /**
+     * Extrae todas las reclamaciones de un token JWT.
+     * 
+     * @param token el token JWT
+     * @return las reclamaciones
+     */
+    private static Claims extractAllClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(getSignInKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     /**
@@ -50,13 +76,8 @@ public class JwtTokenUtil {
      * @param token el token JWT
      * @return el nombre de usuario
      */
-    public static String getUsernameFromToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(secret.getBytes())
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+    private static String getUsernameFromToken(String token) {
+        return extractAllClaims(token).getSubject();
     }
 
     /**
@@ -65,13 +86,8 @@ public class JwtTokenUtil {
      * @param token el token JWT
      * @return el rol de usuario
      */
-    public static String getRoleFromToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(secret.getBytes())
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .get("role", String.class);
+    private static Rol getRoleFromToken(String token) {
+        return extractAllClaims(token).get("role", Rol.class);
     }
 
     /**
@@ -86,13 +102,31 @@ public class JwtTokenUtil {
                 token = token.substring(7); // Elimina el prefijo "Bearer "
             }
 
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(secret.getBytes())
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
+            return Optional.ofNullable(getUsernameFromToken(token));
+        } catch (Exception e) {
+            if (e instanceof ExpiredJwtException) {
+                System.out.println("El token ha expirado");
+                return Optional.empty();
+            } else {
+                e.printStackTrace();
+                return Optional.empty();
+            }
+        }
+    }
 
-            return Optional.ofNullable(claims.getSubject()); // Generalmente, el username está en 'sub'
+    /**
+     * Extrae el rol de usuario de un token JWT.
+     * 
+     * @param token el token JWT
+     * @return el rol de usuario, si está presente
+     */
+    public static Optional<Rol> extractRoleFromToken(String token) {
+        try {
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7); // Elimina el prefijo "Bearer "
+            }
+
+            return Optional.ofNullable(getRoleFromToken(token));
         } catch (Exception e) {
             if (e instanceof ExpiredJwtException) {
                 System.out.println("El token ha expirado");
