@@ -10,7 +10,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import dnk.casino.Users.Usuario.Rol;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 // Validar el token y extraer datos
                 Optional<String> usernameOpt = JwtTokenUtil.extractUsernameFromToken(token);
-                Optional<Rol> roleOpt = JwtTokenUtil.extractRoleFromToken(token);
+                Optional<String> roleOpt = JwtTokenUtil.extractRoleFromToken(token);
 
                 // Verificar si el token es válido y no hay una autenticación existente en el
                 // contexto de seguridad
@@ -58,7 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                             usernameOpt.get(), // Nombre de usuario
                             null, // Credenciales (pueden ser null después de autenticación)
-                            List.of(new SimpleGrantedAuthority(roleOpt.get().name())) // Rol
+                            List.of(new SimpleGrantedAuthority(roleOpt.get())) // Rol
                     );
 
                     // Configurar el contexto de seguridad con la autenticación

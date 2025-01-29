@@ -11,8 +11,6 @@ import java.util.Optional;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import dnk.casino.Users.Usuario.Rol;
-
 /**
  * Utilidad para la generación y verificación de tokens JWT.
  * 
@@ -49,7 +47,7 @@ public class JwtTokenUtil {
     public static String generateToken(Usuario usuario) {
         return Jwts.builder()
                 .subject(usuario.getUsername()) // Añade el nombre del usuario
-                .claim("role", usuario.getRol()) // Añade el rol del usuario
+                .claim("role", usuario.getRol().name()) // Añade el rol del usuario
                 .issuedAt(new Date()) // Hora actual como "emitido"
                 .expiration(new Date(System.currentTimeMillis() + expiration)) // Tiempo de expiración
                 .signWith(getSignInKey()) // Firma del token
@@ -86,8 +84,8 @@ public class JwtTokenUtil {
      * @param token el token JWT
      * @return el rol de usuario
      */
-    private static Rol getRoleFromToken(String token) {
-        return extractAllClaims(token).get("role", Rol.class);
+    private static String getRoleFromToken(String token) {
+        return extractAllClaims(token).get("role", String.class);
     }
 
     /**
@@ -120,7 +118,7 @@ public class JwtTokenUtil {
      * @param token el token JWT
      * @return el rol de usuario, si está presente
      */
-    public static Optional<Rol> extractRoleFromToken(String token) {
+    public static Optional<String> extractRoleFromToken(String token) {
         try {
             if (token.startsWith("Bearer ")) {
                 token = token.substring(7); // Elimina el prefijo "Bearer "
