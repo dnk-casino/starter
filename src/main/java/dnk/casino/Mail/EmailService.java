@@ -12,12 +12,27 @@ import org.springframework.stereotype.Service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
+/**
+ * Servicio de correo electrónico para enviar mensajes a los usuarios.
+ * 
+ * @author Danikileitor
+ */
 @Service
 public class EmailService {
 
+    /**
+     * Servicio de correo electrónico de JavaMail.
+     */
     @Autowired
     private JavaMailSender javaMailSender;
 
+    /**
+     * Envía un correo electrónico simple a un destinatario.
+     * 
+     * @param destinatario el correo electrónico del destinatario
+     * @param asunto       el asunto del correo electrónico
+     * @param mensaje      el mensaje del correo electrónico
+     */
     public void enviarCorreo(String destinatario, String asunto, String mensaje) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setFrom(System.getenv().get("MAIL_USERNAME"));
@@ -28,6 +43,14 @@ public class EmailService {
         javaMailSender.send(mailMessage);
     }
 
+    /**
+     * Envía un correo electrónico con un adjunto a un destinatario.
+     * 
+     * @param destinatario el correo electrónico del destinatario
+     * @param asunto       el asunto del correo electrónico
+     * @param mensaje      el mensaje del correo electrónico
+     * @param adjunto      la ruta del archivo adjunto
+     */
     public void enviarCorreo(String destinatario, String asunto, String mensaje, String adjunto) {
         try {
             MimeMessage message = javaMailSender.createMimeMessage();
