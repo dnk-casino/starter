@@ -36,6 +36,26 @@ public class SkinService {
   }
 
   /**
+   * Busca una skin por su ID.
+   * 
+   * @param id el ID de la skin a buscar
+   * @return la skin encontrada, o un Optional vacío si no se encuentra
+   */
+  public Optional<Skin> findById(String id) {
+    return skinRepository.findById(id);
+  }
+
+  /**
+   * Busca una skin por su nombre.
+   * 
+   * @param name el nombre de la skin a buscar
+   * @return la skin encontrada, o un Optional vacío si no se encuentra
+   */
+  public Optional<Skin> findByName(String name) {
+    return skinRepository.findByName(name);
+  }
+
+  /**
    * Actualiza una skin existente en el sistema.
    * 
    * @param id          el ID de la skin a actualizar
