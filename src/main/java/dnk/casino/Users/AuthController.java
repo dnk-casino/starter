@@ -87,7 +87,7 @@ public class AuthController {
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     usuario.get(), // Principal (Usuario autenticado)
                     null, // Credenciales (pueden ser null después de autenticación)
-                    List.of(new SimpleGrantedAuthority(usuario.get().getRol().name())) // Roles/Authorities
+                    List.of(new SimpleGrantedAuthority(usuario.get().getRol().name())) // Rol/Authorities
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -120,7 +120,7 @@ public class AuthController {
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     usuario.get(), // Principal (Usuario autenticado)
                     null, // Credenciales (pueden ser null después de autenticación)
-                    List.of(new SimpleGrantedAuthority(usuario.get().getRol().name())) // Roles/Authorities
+                    List.of(new SimpleGrantedAuthority(usuario.get().getRol().name())) // Rol/Authorities
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
 

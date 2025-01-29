@@ -58,7 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                             usernameOpt.get(), // Nombre de usuario
                             null, // Credenciales (pueden ser null después de autenticación)
-                            List.of(new SimpleGrantedAuthority(roleOpt.get().toString())) // Roles
+                            List.of(new SimpleGrantedAuthority(roleOpt.get().name())) // Rol
                     );
 
                     // Configurar el contexto de seguridad con la autenticación
