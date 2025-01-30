@@ -14,7 +14,7 @@
 
   <groupId>io.github.dnk-casino</groupId>
   <artifactId>starter</artifactId>
-  <version>1.0.9</version>
+  <version>1.0.10</version>
 
   <name>starter</name>
   <description>Librería para los juegos de dnk-casino</description>
