@@ -1,14 +1,20 @@
-package dnk.casino.Users;
+package dnk.casino.Config;
+
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+
+import dnk.casino.Users.JwtAuthenticationFilter;
 
 /**
  * Configuración de seguridad para la aplicación.
@@ -44,11 +50,19 @@ public class SecurityConfig {
      */
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // http.authorizeHttpRequests((auth) -> auth.anyRequest().permitAll());
 
-        http
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+        corsConfiguration.setAllowedOrigins(List.of("*"));
+        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        corsConfiguration.setAllowCredentials(true);
+        corsConfiguration.setExposedHeaders(List.of("Authorization", "Content-Type"));
+
+        return http
                 // Configuración de CSRF
                 .csrf(csrf -> csrf.disable()) // Deshabilitar CSRF
+                // Permitimos todas las CORS
+                .cors(Customizer.withDefaults())
                 // Permitir todo básicamente
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/admin/api", "/admin/api/**", "/users", "/users/**")
@@ -57,12 +71,10 @@ public class SecurityConfig {
                 // Deshabilita el login basado en formulario por defecto
                 .formLogin(login -> login.disable())
                 // Deshabilita X-Frame-Options para que se pueda insertar en iframes
-                .headers(headers -> headers.frameOptions(options -> options.disable()));
-
-        // Añadir el filtro JWT
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-
+                .headers(headers -> headers.frameOptions(options -> options.disable()))
+                // Añadir el filtro JWT
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                // Build
+                .build();
     }
 }
