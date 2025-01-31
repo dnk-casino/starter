@@ -82,6 +82,25 @@ public class UsuarioService {
     }
 
     /**
+     * Busca a todos los usuarios del sistema.
+     * 
+     * @return una lista con los usuarios encontrados.
+     */
+    public List<Usuario> findAll() {
+        return usuarioRepository.findAll();
+    }
+
+    /**
+     * Busca un usuario por su id.
+     * 
+     * @param id id del usuario a buscar
+     * @return el usuario encontrado, o un Optional vacío si no se encuentra
+     */
+    public Optional<Usuario> findById(String id) {
+        return usuarioRepository.findById(id);
+    }
+
+    /**
      * Busca un usuario por su nombre de usuario.
      * 
      * @param username nombre de usuario a buscar
